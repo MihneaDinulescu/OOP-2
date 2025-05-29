@@ -1,60 +1,132 @@
-# Vehicle Rental System
+# Sistem de Rezervări Vehicule
 
-## Descriere
-Acesta este un sistem de închiriere vehicule care permite gestionarea vehiculelor, rezervărilor, clienților, angajaților și locațiilor. Sistemul permite utilizatorilor să facă rezervări de vehicule disponibile, să efectueze plăți, să adauge recenzii și să vizualizeze detalii ale rezervărilor. De asemenea, include managementul vehiculelor, locațiilor și angajaților, oferind un sistem complet pentru gestionarea unei firme de închirieri vehicule.
+## Descriere generală
+Acest proiect este un sistem de închiriere vehicule (Vehicle Rental System), dezvoltat în Java, care gestionează relațiile dintre clienți, vehicule, angajați, locații, rezervări și recenzii. Sistemul permite atât înregistrarea și administrarea entităților, cât și generarea unor statistici și rapoarte utile pentru o companie de închirieri auto.
 
-## Funcționalități
-1. Căutare vehicul disponibil  
-2. Verificare disponibilitate vehicul  
-3. Adăugare vehicul în sistem  
-4. Asociere vehicul cu rezervare  
-5. Calcul preț închiriere / tip vehicul  
-6. Adăugare locație în sistem  
-7. Adăugare rezervare în sistem  
-8. Afișare detalii rezervare  
-9. Asocierea recenziei la rezervare  
-10. Efectuare plată  
-11. Adăugare angajat în sistem  
-12. Sortare clienți în ordine alfabetică  
+Datele sunt gestionate într-o bază de date relațională, iar accesul se face prin JDBC. Codul este organizat pe principiile OOP, cu servicii singleton pentru logica de business, un sistem de audit pentru trasabilitate și o interfață simplă prin main() care evidențiază funcționalitățile-cheie.
 
-## Clasele din Sistem
-1. **Angajat**  
-   Reprezintă un angajat al companiei de închiriere vehicule, având informații precum ID, nume, prenume, telefon, email, funcție și locație asociată. De asemenea, un angajat poate avea vehicule alocate.
+---
 
-2. **Bicicleta**  
-   Reprezintă o bicicletă disponibilă pentru închiriere, care moștenește comportamentul unui vehicul. Are un preț de închiriere specific pe zi.
+## Structura și descrierea entităților
 
-3. **Camion**  
-   Reprezintă un camion disponibil pentru închiriere, care moștenește comportamentul unui vehicul. Are un preț de închiriere specific pe zi.
+### Client
+Reprezintă clienții care pot efectua rezervări.
+- Identificator unic client
+- Nume și prenume
+- Număr de telefon
+- Email
 
-4. **Client**  
-   Reprezintă un client al sistemului de închiriere, care poate face rezervări. Are informații precum ID, nume, prenume, număr de telefon, email și o listă de rezervări făcute.
+### Rezervare
+Reprezintă rezervările realizate de clienți.
+- Identificator unic rezervare
+- Referință către client
+- Avans plătit (opțional)
+- Metodă de plată
 
-5. **Locatie**  
-   Reprezintă o locație a companiei de închirieri, incluzând detalii precum ID, țară, oraș, stradă și număr stradă. De asemenea, poate avea angajați asociați.
+### Vehicul
+Reprezintă vehiculele disponibile pentru închiriere.
+- Identificator unic vehicul
+- Număr de înmatriculare (unic)
+- Model vehicul
+- Referință către angajat responsabil
+- Culoare
+- Tip vehicul
 
-6. **Masina**  
-   Reprezintă o mașină disponibilă pentru închiriere, care moștenește comportamentul unui vehicul. Are un preț de închiriere specific pe zi.
+### Angajat
+Reprezintă angajații care gestionează vehicule și locații.
+- Identificator unic angajat
+- Nume și prenume
+- Număr de telefon
+- Email
+- Funcție
+- Referință către locație
 
-7. **Recenzie**  
-   Reprezintă o recenzie a unei rezervări, inclusiv ratingul în stele, data recenziei și rezervarea asociată.
+### RezervareVehicul
+Leagă o rezervare de vehiculul rezervat, incluzând perioada rezervării.
+- Identificator unic rezervare-vehicul
+- Referință către rezervare
+- Referință către vehicul
+- Data de început a rezervării
+- Data de sfârșit a rezervării
 
-8. **Rentabil**  
-   Interfață care definește metoda `calculeazaPretInchiriere(int zile)`, utilizată pentru a calcula prețul de închiriere în funcție de tipul vehiculului.
+### Recenzie
+Reprezintă feedback-ul oferit pentru o rezervare.
+- Identificator unic recenzie
+- Număr de stele (1-5)
+- Data recenziei
+- Referință către rezervare
 
-9. **Rezervare**  
-   Reprezintă o rezervare făcută de un client, cu detalii precum ID, clientul care a făcut rezervarea, avansul plătit, metoda de plată și lista de vehicule rezervate.
+### Locatie
+Reprezintă locațiile unde sunt angajați și vehicule.
+- Identificator unic locație
+- Țara
+- Oraș
+- Strada
+- Numărul
 
-10. **RezervareVehicul**  
-    Reprezintă un tabel intermediar între **Vehicul** și **Rezervare**, care leagă aceste două entități. Această clasă gestionează relația mulți-la-mulți dintre vehicule și rezervări, stocând informațiile despre vehiculele rezervate într-o anumită perioadă (start și end date), asociate unei rezervări.
+---
 
-11. **Vehicul**  
-    Clasa de bază pentru toate tipurile de vehicule (biciclete, mașini, camioane). Contine informații precum ID vehicul, număr de înmatriculare, model, angajat asociat și culoare. 
+## Tipuri de obiecte în sistem
 
-12. **VehiculIndisponibilException**  
-    Excepție aruncată atunci când un vehicul nu este disponibil în perioada dorită pentru închiriere.
-    
-14. **ServiceManager**  
-    Clasa singleton care oferă metodele de interacțiune cu sistemul, inclusiv pentru verificarea disponibilității vehiculului, adăugarea vehiculului în sistem, gestionarea rezervărilor și efectuarea plăților. Este responsabilă de logica de afaceri și de gestionarea entităților în cadrul sistemului.
+- **Client** – utilizator care face rezervări  
+- **Rezervare** – comandă pentru închirierea unui vehicul  
+- **Vehicul** – mijloc de transport închiriabil  
+  - **Camion** – vehicul de transport marfă  
+  - **Bicicletă** – vehicul ușor, ecologic  
+  - **Mașină** – vehicul personal sau de familie  
+- **Angajat** – persoană responsabilă de vehicule și locații  
+- **RezervareVehicul** – legătura între rezervare și vehicul, cu perioada de închiriere  
+- **Recenzie** – feedback acordat unei rezervări  
+- **Locație** – punct geografic cu angajați și vehicule  
 
+---
+
+## Funcționalități principale
+
+1. **Top 3 clienți cu cele mai multe rezervări**  
+   Afișează primii trei clienți care au efectuat cele mai multe rezervări.
+
+2. **Vehicule disponibile într-o anumită perioadă**  
+   Listează vehiculele care nu sunt rezervate între două date specificate.
+
+3. **Angajatul cu cele mai multe vehicule gestionate**  
+   Identifică angajatul care are în grijă cele mai multe vehicule.
+
+4. **Mapare client – număr total rezervări**  
+   Prezintă o listă a clienților și numărul total de rezervări făcute de fiecare.
+
+5. **Media recenziilor pentru un vehicul**  
+   Calculează media rating-urilor pentru un vehicul specific.
+
+6. **Angajați, locații și numărul total de vehicule gestionate**  
+   Afișează angajații împreună cu locațiile lor și numărul de vehicule gestionate de fiecare.
+
+7. **Top 5 vehicule cu cea mai mare medie a ratingului (minim 5 recenzii)**  
+   Listează cele mai bine cotate 5 vehicule, ținând cont de un număr minim de recenzii.
+
+8. **Clienți cu avans maxim plătit**  
+   Afișează clienții și valoarea maximă a avansului plătit într-o rezervare.
+
+9. **Calcul total plată pentru o rezervare**  
+   Calculează suma totală de plată aferentă unei rezervări date.
+
+10. **Locații și numărul de rezervări**  
+    Afișează locațiile împreună cu numărul de rezervări realizate în fiecare.
+
+11. **Vehicule care nu au fost rezervate niciodată**  
+    Listează vehiculele fără nici o rezervare.
+
+12. **Număr de rezervări pe lunile anului**  
+    Prezintă distribuția numărului de rezervări pe fiecare lună.
+
+13. **Distribuția vehiculelor pe locații**  
+    Arată câte vehicule sunt alocate pentru fiecare locație.
+
+14. **Recenzii negative**  
+    Listează recenziile cu rating scăzut.
+
+15. **Locații fără angajați**  
+    Afișează locațiile unde nu sunt angajați asignați.
+
+---
 
